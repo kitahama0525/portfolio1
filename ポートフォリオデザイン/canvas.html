@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+<style media="screen">
+  body{
+    margin:0;
+  }
+</style>
+<body>
+  <canvas id="sakura"></canvas>
+<script>
+let canvas = document.getElementById("sakura");
+let ctx = canvas.getContext("2d");
+let imgCnt = 25;                // 描画する画像の数
+let imgAry = [];                // 画像の情報を格納
+let boxw = window.innerWidth;   // ウィンドウサイズの横幅
+let boxh = window.innerHeight;  // ウィンドウサイズの縦幅
+let cvsw = boxw;                // canvasタグに指定したwidth
+let cvsh = boxh;                // canvasタグに指定したheight
+let imgBaseSizeW = 10;          // 画像の基本サイズ横幅 (15)
+let imgBaseSizeH = 12.33;        // 画像の基本サイズ立幅 (18.5)
+let aspectMax = 1.5;            // アスペクト比計算時の最大値
+let aspectMin = 0.5;            // アスペクト比計算時の最小値
+let speedMax = 2;               // 落下速度の最大値
+let speedMin = 0.5;             // 落下速度の最小値
+let angleAdd = 4;                  // 画像角度への加算値
+canvas.setAttribute('width', boxw);
+canvas.setAttribute('height', boxh);
+
+// function canvas_resize(){
+//   let boxw = window.innerWidth;
+//   let boxh = window.innerHeight;
+//   canvas.setAttribute('width', boxw);
+//   canvas.setAttribute('height', boxh);
+//   flow_start();
+//   console.log(boxw, boxh);
+// }
+//
+// window.addEventListener('resize', canvas_resize, false);
+// canvas_resize();
+
+// 画像の読み込み
+let img = new Image();
+img.src = "images/hanabira.png";
+img.onload = fall_start;
+
+// 画像のパラメーターを設定
+function setImagas(){
+  let aspect = 0;
+  for(let i = 0;i < imgCnt;i++){
+    // 画像サイズに掛けるアスペクト比を0.5~1.5倍でランダムで生成
+    aspect = Math.random()*(aspectMax-aspectMin)+aspectMin;
+    imgAry.push({
+      'posx': Math.random()*cvsw,   // 初期表示位置x
+      'posy': Math.random()*cvsh,   // 初期表示位置y
+      'sizew': imgBaseSizeW*aspect, // 画像の横幅
+      'sizeh': imgBaseSizeH*aspect, // 画像の縦幅
+      'speedy': Math.random()*(speedMax-speedMin)+speedMin,　// 画像が落ちていく速度
+      'angle': Math.random()*360,   // 角度
+    });
+  }
+}
+
+// 描画、パラメーターの更新
+let idx = 0;
+let cos = 0;
+let sin = 0;
+let rad = Math.PI / 180;
+function fall(){
+  ctx.clearRect(0,0,cvsw,cvsh);
+  for(idx = 0;idx < imgCnt;idx++){
+    imgAry[idx].posy += imgAry[idx].speedy;
+    imgAry[idx].angle += Math.random()*angleAdd;
+    cos = Math.cos(imgAry[idx].angle * rad);
+    sin = Math.sin(imgAry[idx].angle * rad);
+    ctx.setTransform(cos, sin, sin, cos, imgAry[idx].posx, imgAry[idx].posy);
+    ctx.drawImage(img, 0, 0, imgAry[idx].sizew , imgAry[idx].sizeh);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    // 範囲外に描画された画像を上に戻す
+    if(imgAry[idx].posy >= cvsh){
+      imgAry[idx].posy = -imgAry[idx].sizeh;
+    }
+  }
+}
+
+function fall_start(){
+  setImagas();
+  setInterval(fall,10);
+}
+
+console.log(`ウィンドウサイズの横幅`);
+console.log(window.innerWidth);
+
+console.log(`ウィンドウサイズの高さ`);
+console.log(window.innerHeight);
+</script>
+</body>
+</html>

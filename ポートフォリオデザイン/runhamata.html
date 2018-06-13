@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>はまた</title>
+    <style media="screen">
+      .hamata__box{
+        position: relative;
+      }
+      .hamata{
+        margin: 0 auto;
+        width: 500px; height: 500px;
+        background-image: url(run_hamata_sprite.png);
+        background-size: 600%;
+        transform: translateX(60vw);
+        animation: run 0.5s steps(6, end) infinite, move 3s linear infinite;
+      }
+
+      @keyframes run {
+        0%{
+          background-position-x:calc(0 * -100%);
+        }
+        100%{
+          background-position-x:calc(6 * -100%);
+        }
+      }
+
+      @keyframes move {
+        0%{
+          transform: translateX(0);
+        }
+        100%{
+          transform: translateX(-100vw);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hamata__box">
+      <div class="hamata"></div>
+    </div>
+  </body>
+</html>
